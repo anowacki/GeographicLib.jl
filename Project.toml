@@ -1,0 +1,14 @@
+name = "GeographicLib"
+uuid = "c96ba436-a6fe-11e9-10ab-c9f3919c93d1"
+authors = ["Andy Nowacki <a.nowacki@leeds.ac.uk>"]
+version = "0.1.0"
+
+[deps]
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[extras]
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["PyCall", "Test"]
