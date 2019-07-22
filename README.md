@@ -1,6 +1,6 @@
 # GeographicLib.jl
 
-Julia port of Charles H.H. Karney's [GeographicLib](https://geographiclib.sourceforge.io).
+Julia port of Charles F. F. Karney's [GeographicLib](https://geographiclib.sourceforge.io).
 
 [![Build Status](https://travis-ci.org/anowacki/GeographicLib.jl.svg?branch=master)](https://travis-ci.org/anowacki/GeographicLib.jl)
 [![Build status](https://ci.appveyor.com/api/projects/status/hy3339eys3jhgme0?svg=true)](https://ci.appveyor.com/project/AndyNowacki/geographiclib-jl)
@@ -102,11 +102,16 @@ for each of these functions for more information.
 ## Testing
 
 To perform some of its tests, the package relies on the Python port of GeographicLib.
-Hence if you do `pkg> test`, PyCall will attempt to import or install `geographiclib`.
+Hence if you do `pkg> test`, PyCall will attempt to import `geographiclib` and
+install it if possible.
 
 You may also run `julia script/test_GeodTest.jl` which compares the output of this
 package and the routines in `libproj` to a set of test results computed with
-high precision.
+high precision.  For this purpose, you need to have
+(Proj installed)[https://proj.org/install.html] and will need to edit the script
+to point to the location of the `libproj` library.
+
+Neither of these tests are necessary to use GeographicLib.jl normally.
 
 
 ## References
