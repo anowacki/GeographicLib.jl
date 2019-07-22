@@ -2,7 +2,7 @@ using Test
 using GeographicLib
 import PyCall
 
-pymaths = PyCall.pyimport_conda("geographiclib.geomath", "geographiclib")
+pymaths = PyCall.pyimport_conda("geographiclib.geomath", "geographiclib", "conda-forge")
 
 @testset "Maths" begin
     @test GeographicLib.Math.digits == pymaths.Math.digits

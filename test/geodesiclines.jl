@@ -2,8 +2,8 @@ using Test
 using GeographicLib
 import PyCall
 
-pygeodesic = PyCall.pyimport_conda("geographiclib.geodesic", "geographiclib")
-pygeodesicline = PyCall.pyimport_conda("geographiclib.geodesicline", "geographiclib")
+pygeodesic = PyCall.pyimport_conda("geographiclib.geodesic", "geographiclib", "conda-forge")
+pygeodesicline = PyCall.pyimport_conda("geographiclib.geodesicline", "geographiclib", "conda-forge")
 
 pyg(a=1, f=0) = pygeodesic.Geodesic(a, f)
 pygl(args...) = pygeodesicline.GeodesicLine(args...)
