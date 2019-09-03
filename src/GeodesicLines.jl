@@ -51,6 +51,9 @@ struct GeodesicLine
     a13::Float64
 end
 
+# Treat the GeodesicLine struct as a scalar
+Base.Broadcast.broadcastable(line::GeodesicLine) = Ref(line)
+
 function GeodesicLine(geod::Geodesics.Geodesic, lat1, lon1, azi1;
                       caps = GeodesicCapability.STANDARD | GeodesicCapability.DISTANCE_IN,
                       salp1 = Math.nan, calp1 = Math.nan)

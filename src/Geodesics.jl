@@ -79,6 +79,9 @@ struct Geodesic
     _C4x::Vector{Float64}
 end
 
+# Trest the Geodesic struct as a scalar
+Base.Broadcast.broadcastable(geod::Geodesic) = Ref(geod)
+
 """
     Geodesic(a, f) -> geodesic
 

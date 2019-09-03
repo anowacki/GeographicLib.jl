@@ -13,9 +13,9 @@ pygl(args...) = pygeodesicline.GeodesicLine(args...)
         let a = 1234, f = 2*(rand() - 0.5),
                 (lon1, lat1) = (360*(rand() - 0.5), 180*(rand() - 0.5)),
                 azi1 = 360*rand()
-            g = GeographicLib.Geodesics.Geodesic(a, f)
+            g = Geodesic(a, f)
             g′ = pyg(a, f)
-            l = GeographicLib.GeodesicLines.GeodesicLine(g, lat1, lon1, azi1)
+            l = GeodesicLine(g, lat1, lon1, azi1)
             l′ = pygl(g′, lat1, lon1, azi1)
             for f in fieldnames(typeof(l))
                 v = getfield(l, f)
@@ -27,6 +27,16 @@ pygl(args...) = pygeodesicline.GeodesicLine(args...)
                         @test isnan(v′)
                     end
                 end
+            end
+            # Test for keyword construction with wrong arguments
+            @test_throws ArgumentError GeodesicLine(g, lon1=lon1, lat1=lat1)
+            @test_throws ArgumentError GeodesicLine(g, lon1=lon1, lat1=lat1, azi=azi1, lon2=0, lat2=0)
+            @test_throws ArgumentError GeodesicLine(g, lon1=lon1, lat1=lat1, azi=azi1, dist=1, angle=1)
+            # Keyword construction
+            g1, g2 = GeodesicLine(g, lat1, lon1, azi1), GeodesicLine(g, lon1=lon1, lat1=lat1, azi=azi1)
+            for f in fieldnames(typeof(f))
+                v1, v2 = getfield((g1, g2), f)
+                @test (isnan(v1) && isnan(v2)) || v1 == v2
             end
         end
     end

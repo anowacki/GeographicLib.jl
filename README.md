@@ -39,6 +39,7 @@ the interface of the Python port of GeographicLib.
 
 ### Julia-style interface
 
+#### Forward calculations
 Create an ellipsoid by providing the semimajor radius and flattening to
 the `Geodesic` constructor:
 
@@ -70,9 +71,10 @@ julia> lon1, lat1 = 0, 0;
 julia> azi, dist = 45, 1000; # 1 km along 45°
 
 julia> forward(geod, lon1, lat1, azi, dist)
-(lon = 4.0582278226970505, lat = 4.075072441996237, baz = 225.1444395329488)
+(lon = 4.0582278226970505, lat = 4.075072441996237, baz = -134.8555604670512, dist = 1000, angle = 5.748708172166859)
 ```
 
+#### Inverse calculations
 Compute the azimuth, backazimuth and distance between two points:
 
 ```julia
@@ -84,6 +86,64 @@ julia> inverse(lon1, lat1, lon2, lat2)
 
 (Here, `baz` is the backazimuth from point 2 to point 1, whilst `angle` is the arc distance
 measured in degrees between points as if they were on a sphere.)
+
+#### Constructing great circles
+To efficiently compute many points along a particular great circle, you can construct a
+`GeodesicLine` (here, at 1000 km distances between Beijing airport and San Francisco
+airport) and use `forward`:
+
+```julia
+julia> line = GeodesicLine(lon1=116.6, lat1=40.1, lon2=-122.4, lat2=37.6);
+
+julia> forward.(line, 0:1000e3:10000e3)
+11-element Array{NamedTuple{(:lon, :lat, :baz, :angle),NTuple{4,Float64}},1}:
+ (lon = 116.6, lat = 40.1, baz = -137.0835839712501, angle = 0.0)                                           
+ (lon = 125.44903079924097, lat = 46.37320813609803, baz = -131.00635460562273, angle = 8.999172866948838)  
+ (lon = 136.4075140500135, lat = 51.78785851967508, baz = -122.70566872360234, angle = 17.995261013573796)  
+ (lon = 149.93824895740542, lat = 55.92437254305949, baz = -111.75427031060497, angle = 26.98887852958424)  
+ (lon = 165.90776020637412, lat = 58.27452472166077, baz = -98.31758202155277, angle = 35.980878576192254)  
+ (lon = -176.96832804774255, lat = 58.434988533052156, baz = -83.70986035579932, angle = 44.972270315436404)
+ (lon = -160.73052153000853, lat = 56.37430385916338, baz = -70.00076449597367, angle = 53.964121473898246) 
+ (lon = -146.82672730321303, lat = 52.45769208832891, baz = -58.667901786243704, angle = 62.957455553072116)
+ (lon = -135.52790977774458, lat = 47.19436392438814, baz = -50.0138069289103, angle = 71.95315308031782)   
+ (lon = -126.41706065849593, lat = 41.02144776815703, baz = -43.656406099766116, angle = 80.95186600702041) 
+ (lon = -118.93224695733755, lat = 34.24798773004601, baz = -39.073877341144225, angle = 89.95395339318391) 
+```
+
+#### Waypoints
+If you have constructed a `GeodesicLine` between two points or specified a distance,
+you can use the `waypoints` convenience function to compute a set of points along a
+great circle.
+
+Firstly, you can specify a set number of points along the line:
+
+```julia
+julia> waypoints(line, n=5)
+5-element Array{NamedTuple{(:lon, :lat, :baz, :dist, :angle),NTuple{5,Float64}},1}:
+ (lon = 116.6, lat = 40.1, baz = -137.0835839712501, dist = 0.0, angle = 0.0)                                                          
+ (lon = 141.21330642828883, lat = 53.53055762971426, baz = -118.88359410725269, dist = 2.3784994975269474e6, angle = 21.39958966473992)
+ (lon = 178.87381779849247, lat = 58.60690096032195, baz = -87.25623680042224, dist = 4.756998995053895e6, angle = 42.787351553799056) 
+ (lon = -145.14838587689667, lat = 51.81242147405395, baz = -57.34286188749553, dist = 7.135498492580842e6, angle = 64.17620343175672) 
+ (lon = -122.4, lat = 37.599999999999994, baz = -41.109730492903964, dist = 9.51399799010779e6, angle = 85.57848955531682)             
+```
+
+Or you can specify a set spacing between points along the line:
+```julia
+julia> waypoints(line, dist=5_000e3)
+3-element Array{NamedTuple{(:lon, :lat, :baz, :dist, :angle),NTuple{5,Float64}},1}:
+ (lon = 116.6, lat = 40.1, baz = -137.0835839712501, dist = 0.0, angle = 0.0)                                             
+ (lon = -176.96832804774255, lat = 58.434988533052156, baz = -83.70986035579932, dist = 5.0e6, angle = 44.972270315436404)
+ (lon = -122.4, lat = 37.599999999999994, baz = -41.109730492903964, dist = 9.51399799010779e6, angle = 85.57848955531682)
+
+julia> waypoints(line, angle=20)
+6-element Array{NamedTuple{(:lon, :lat, :baz, :dist, :angle),NTuple{5,Float64}},1}:
+ (lon = 116.6, lat = 40.1, baz = -137.0835839712501, dist = 0.0, angle = 0.0)                                                         
+ (lon = 139.19114607860084, lat = 52.83782284453118, baz = -120.50255714699239, dist = 2.2228860526324883e6, angle = 20.0)            
+ (lon = 173.53783679104947, lat = 58.629539520620774, baz = -91.81254596963203, dist = 4.44699528316639e6, angle = 40.0)              
+ (lon = -151.10367085049282, lat = 53.91890440185242, baz = -62.09291230954403, dist = 6.671174913353463e6, angle = 60.0)             
+ (lon = -127.29426650297322, lat = 41.707094275305174, baz = -44.236119103725684, dist = 8.894239314095357e6, angle = 80.0)           
+ (lon = -122.39999999999998, lat = 37.59999999999999, baz = -41.109730492903964, dist = 9.51399799010779e6, angle = 85.57848955531682)
+```
 
 ### Traditional interface
 
@@ -97,6 +157,23 @@ as the C or Python interface to GeographicLib:
 These all return extra information about the geodesic, including the area between
 the geodesic and the equator.  Output is controlled by a mask.  See the docstring
 for each of these functions for more information.
+
+The following are also exposed:
+
+- `GeographicLib.GeodesicLine`: construct a great circle from a starting position and azimuth
+- `GeographicLib.ArcDirectLine`: construct a great circle from a starting position, azimuth and
+  arc length, which can be used by `GeographicLib.Position` or `GeographicLib.ArcPosition` to compute
+  points along the line
+- `GeographicLib.DirectLine`: construct a great circle from a starting position, azimuth and
+  distance, which can be used by `GeographicLib.Position` or `GeographicLib.ArcPosition` to compute
+  points along the line
+- `GeographicLib.InverseLine`: construct a great circle from a starting and end position,
+  which can be used by `GeographicLib.Position` or `GeographicLib.ArcPosition` to compute
+  points along the line
+- `GeographicLib.Position`: calculate a point along a `GeographicLib.GeodesicLine` given
+  a distance
+- `GeographicLine.ArcPosition`: calculate a point along a `GeographicLine.GeodesicLine`
+  given an arc length
 
 
 ## Testing
