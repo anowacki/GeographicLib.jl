@@ -2,9 +2,9 @@ module Geodesics
 
 using StaticArrays: @SVector
 
-import ..Math, ..Constants, ..GeodesicCapability
+import ..Math, ..Constants, ..GeodesicCapability, ..Result
 
-export Geodesic, Inverse
+export Geodesic, ArcDirect, Direct, Inverse
 
 const GEOGRAPHICLIB_GEODESIC_ORDER = 6
 const nA1_ = GEOGRAPHICLIB_GEODESIC_ORDER
@@ -79,8 +79,11 @@ struct Geodesic
     _C4x::Vector{Float64}
 end
 
-# Trest the Geodesic struct as a scalar
+# Treat the Geodesic struct as a scalar
 Base.Broadcast.broadcastable(geod::Geodesic) = Ref(geod)
+
+Base.:(==)(g1::Geodesic, g2::Geodesic) =
+    all(getfield(g1, f) == getfield(g2, f) for f in fieldnames(Geodesic))
 
 """
     Geodesic(a, f) -> geodesic
@@ -128,35 +131,9 @@ function Geodesic(a, f)
 end
 
 """
-    Geodesics.Result
+    Inverse(geodesic, lat1, lon1, lat2, lon2, outmask=STANDARD) -> result::Result
 
-Type holding the result of a forward or inverse calculation using a geodesic.
-
-If fields have not been calculated because of the presence/absence of any
-flags when performing the calculation, the field will be `nothing`.
-"""
-mutable struct Result
-    lat1::Union{Float64,Nothing}
-    lon1::Union{Float64,Nothing}
-    lat2::Union{Float64,Nothing}
-    lon2::Union{Float64,Nothing}
-    a12::Union{Float64,Nothing}
-    s12::Union{Float64,Nothing}
-    azi1::Union{Float64,Nothing}
-    azi2::Union{Float64,Nothing}
-    m12::Union{Float64,Nothing}
-    M12::Union{Float64,Nothing}
-    M21::Union{Float64,Nothing}
-    S12::Union{Float64,Nothing}
-end
-
-Result() = Result(nothing, nothing, nothing, nothing, nothing, nothing, nothing,
-                  nothing, nothing, nothing, nothing, nothing)
-
-"""
-    Inverse(geodesic, lat1, lon1, lat2, lon2, outmask=STANDARD) -> result::Geodesics.Result
-
-Solve the inverse geodesic problem and return a `Geodesics.Result` containing the
+Solve the inverse geodesic problem and return a `Result` containing the
 parameters of interest.
 
 Input arguments:

@@ -1,6 +1,6 @@
 module GeodesicLines
 
-import ..Math, ..GeodesicCapability, ..Geodesics
+import ..Math, ..GeodesicCapability, ..Geodesics, ..Result
 
 export GeodesicLine, SetArc, SetDistance, Position, ArcPosition
 
@@ -54,6 +54,15 @@ end
 # Treat the GeodesicLine struct as a scalar
 Base.Broadcast.broadcastable(line::GeodesicLine) = Ref(line)
 
+"""
+    GeodesicLine(geod::Geodesic, lat1, lon1, azi1; caps, salp1, calp1) -> line
+
+Create a `GeodesicLine` with starting latitude `lat1`° and longitude `lon1`°,
+and azimuth `azi1`°.
+
+Control the capabilities of the `line` with `caps`.  Optionally specify
+the sine and cosine of the azimuth at point 1, respectively `salp1` and `calp1`.
+"""
 function GeodesicLine(geod::Geodesics.Geodesic, lat1, lon1, azi1;
                       caps = GeodesicCapability.STANDARD | GeodesicCapability.DISTANCE_IN,
                       salp1 = Math.nan, calp1 = Math.nan)
@@ -351,35 +360,16 @@ function _GenPosition(self::GeodesicLine, arcmode, s12_a12, outmask)
   a12, lat2, lon2, azi2, s12, m12, M12, M21, S12
 end
 
-mutable struct Result
-    lat1::Union{Float64,Nothing}
-    lon1::Union{Float64,Nothing}
-    azi1::Union{Float64,Nothing}
-    s12::Union{Float64,Nothing}
-    a12::Union{Float64,Nothing}
-    lat2::Union{Float64,Nothing}
-    lon2::Union{Float64,Nothing}
-    azi2::Union{Float64,Nothing}
-    m12::Union{Float64,Nothing}
-    M12::Union{Float64,Nothing}
-    M21::Union{Float64,Nothing}
-    S12::Union{Float64,Nothing}
-end
+"""
+    Position(line::GeodesicLine, s12, outmask=STANDARD) -> result::Result
 
-Result() = Result(nothing, nothing, nothing, nothing, nothing, nothing,
-                  nothing, nothing, nothing, nothing, nothing, nothing)
+Find the position on the line given `s12`, the distance from the
+first point to the second in metres.
 
-"""Find the position on the line given *s12*
-
-:param s12: the distance from the first point to the second in
-meters
-:param outmask: the :ref:`output mask <outmask>`
-:return: a :ref:`dict`
-
-The default value of *outmask* is STANDARD, i.e., the *lat1*,
-*lon1*, *azi1*, *lat2*, *lon2*, *azi2*, *s12*, *a12* entries are
-returned.  The :class:`~geographiclib.geodesicline.GeodesicLine`
-object must have been constructed with the DISTANCE_IN capability.
+The default value of `outmask` is `STANDARD`, i.e., the `lat1`,
+`lon1`, `azi1`, `lat2`, `lon2`, `azi2`, `s12`, `a12` entries are
+returned.  The `GeodesicLine` object must have been constructed with
+the `DISTANCE_IN` capability.
 """
 function Position(self::GeodesicLine, s12; outmask = GeodesicCapability.STANDARD)
   result = Result()
@@ -404,15 +394,14 @@ function Position(self::GeodesicLine, s12; outmask = GeodesicCapability.STANDARD
   result
 end
 
-"""Find the position on the line given *a12*
+"""
+    ArcPosition(line::GeodesicLine, a12, outmask=STANDARD) -> result::Result
 
-:param a12: spherical arc length from the first point to the second
-in degrees
-:param outmask: the :ref:`output mask <outmask>`
-:return: a :ref:`dict`
+Find the position on the line given `a12`, the spherical arc length from
+the first point to the second in degrees.
 
-The default value of *outmask* is STANDARD, i.e., the *lat1*,
-*lon1*, *azi1*, *lat2*, *lon2*, *azi2*, *s12*, *a12* entries are
+The default value of `outmask` is `STANDARD`, i.e., the `lat1`,
+`lon1`, `azi1`, `lat2`, `lon2`, `azi2`, `s12`, `a12` entries are
 returned.
 """
 function ArcPosition(self::GeodesicLine, a12; outmask = GeodesicCapability.STANDARD)
@@ -438,9 +427,11 @@ function ArcPosition(self::GeodesicLine, a12; outmask = GeodesicCapability.STAND
   result
 end
 
-"""Specify the position of point 3 in terms of distance
+"""
+    SetDistance(line::GeodesicLine, s13) -> line′::GeodesicLine
 
-:param s13: distance from point 1 to point 3 in meters
+Specify the position of point 3 in terms of distance
+from point 1 to point 3 in meters
 
 Return a new `GeodesicLine` with `s13` and `a13` set.
 """
@@ -464,9 +455,11 @@ function SetDistance(self::GeodesicLine, s13)
                s13, a13)
 end
 
-"""Specify the position of point 3 in terms of arc length
+"""
+    SetArc(line::GeodesicLine, a13) -> line′::GeodesicLine
 
-:param a13: spherical arc length from point 1 to point 3 in degrees
+Specify the position of point 3 in terms of spherical arc length
+from point 1 to point 3 in degrees.
 
 Return a new `GeodesicLine` with `a13` and `s13` set.
 """

@@ -61,6 +61,7 @@ and licensed under the MIT License.  See the file `LICENSE.md` for details.
 """
 module GeographicLib
 
+include("results.jl")
 include("Constants.jl")
 include("Math.jl")
 include("GeodesicCapability.jl")
@@ -79,7 +80,8 @@ include("show.jl")
 
 export Geodesic, GeodesicLine, forward, forward_deg, inverse, waypoints
 
-"Default ellipsoid of WGS84"
+"Ellipsoid of the WGS84 system, with a semimajor radius of $(Constants.WGS84_a) m
+and flattening $(Constants.WGS84_f)."
 const WGS84 = Geodesic(Constants.WGS84_a, Constants.WGS84_f)
 
 """
@@ -192,22 +194,22 @@ if multiple `inverse` calculations are needed will be more efficient.
 inverse(a, f, lon1, lat1, lon2, lat2) = inverse(Geodesic(a, f), lon1, lat1, lon2, lat2)
 
 """
-    GeodesicLine([ellipsoid::Geodesic.WGS84]; lon1, lat1, azi, lon2, lat2, angle, dist)
+    GeodesicLine([ellipsoid::Geodesic.WGS84], lon1, lat1; azi, lon2, lat2, angle, dist)
 
 Construct a `GeodesicLine`, which may be used to efficiently compute many distances
 along a great circle.  There are two ways to define the great circle this way:
 
-1. Set a start point, azimuth, and optionally distance.  This requires the keyword arguments
-   `lon1`, `lat1`, `azi1` (all °) and optionally either `angle` (angular distance, °)
+1. Set a start point, azimuth, and optionally distance.  This requires the keyword
+   arguments `azi1` (all °) and optionally either `angle` (angular distance, °)
    or distance `dist` (m).
 2. Set a start point and end point.  This requires the keyword arguments
-   `lon1`, `lat1`, `lon2` and `lat2` (all °).
+   `lon2` and `lat2` (all °).
 
 If `ellipsoid` is not supplied, then WGS84 is used by default.
 
 See [`forward`](@ref) and [`forward_deg`](@ref) for details of computing points along a `GeodesicLine`.
 """
-function GeodesicLine(geod=WGS84; lon1, lat1, azi=nothing, lon2=nothing, lat2=nothing,
+function GeodesicLine(geod::Geodesic, lon1, lat1; azi=nothing, lon2=nothing, lat2=nothing,
     angle=nothing, dist=nothing)
     if azi === nothing && any(x->x===nothing, (lon2, lat2))
         throw(ArgumentError("cannot define a GeodesicLine without either azi or (lon2, lat2)"))
@@ -232,6 +234,8 @@ function GeodesicLine(geod=WGS84; lon1, lat1, azi=nothing, lon2=nothing, lat2=no
         throw(ArgumentError("invalid combination of keyword arguments"))
     end
 end
+
+GeodesicLine(lon1, lat1; kwargs...) = GeodesicLine(WGS84, lon1, lat1; kwargs...)
 
 """
     waypoints(line::GeodesicLine; n, dist, angle) -> points

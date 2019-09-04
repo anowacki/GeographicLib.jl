@@ -121,4 +121,14 @@ rtol = 1e-14
             @test r.S12 ≈ 0.0 atol=1e-15
         end
     end
+
+    @testset "Comparison" begin
+        let a = 1000rand(), f = 0.1rand()
+            g1 = Geodesic(a, f)
+            g2 = Geodesic(a, f)
+            @test g1 == g2
+            g3 = Geodesic(a+1, f)
+            @test g1 != g3 != g2
+        end
+    end
 end

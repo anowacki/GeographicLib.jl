@@ -78,8 +78,8 @@ using GeographicLib: Geodesics
     @testset "forward" begin
         let lon = 360rand(), lat = 180rand() - 90, azi = 360rand(), distances = 40_000e3 .* rand(10)
             for l in (
-                    GeodesicLine(; lon1=lon, lat1=lat, azi=azi),
-                    GeodesicLine(; lon1=lon, lat1=lat, azi=azi, dist=1e6rand()))
+                    GeodesicLine(lon, lat, azi=azi),
+                    GeodesicLine(lon, lat, azi=azi, dist=1e6rand()))
                 for dist in distances
                     result = forward(lon, lat, azi, dist)
                     glresult = forward(l, dist)
@@ -92,8 +92,8 @@ using GeographicLib: Geodesics
     @testset "forward_deg" begin
         let lon = 360rand(), lat = 180rand() - 90, azi = 360rand(), distances = 720 .* rand(10)
             for l in (
-                    GeodesicLine(; lon1=lon, lat1=lat, azi=azi),
-                    GeodesicLine(; lon1=lon, lat1=lat, azi=azi, angle=360rand()))
+                    GeodesicLine(lon, lat, azi=azi),
+                    GeodesicLine(lon, lat, azi=azi, angle=360rand()))
                 for dist in distances
                     result = forward_deg(lon, lat, azi, dist)
                     glresult = forward_deg(l, dist)

@@ -1,9 +1,9 @@
 # Displaying custom types
 
 const SHOW_MAXLEN = maximum(length,
-    [fieldnames.((Geodesic, Geodesics.Result, GeodesicLines.Result))...])
+    [fieldnames.((Geodesic, Result))...])
 
-function Base.show(io::IO, x::Union{Geodesic, Geodesics.Result, GeodesicLines.Result})
+function Base.show(io::IO, x::Union{Geodesic, Result})
     println(io, typeof(x), ":")
     for f in fieldnames(typeof(x))
         v = getfield(x, f)

@@ -29,11 +29,11 @@ pygl(args...) = pygeodesicline.GeodesicLine(args...)
                 end
             end
             # Test for keyword construction with wrong arguments
-            @test_throws ArgumentError GeodesicLine(g, lon1=lon1, lat1=lat1)
-            @test_throws ArgumentError GeodesicLine(g, lon1=lon1, lat1=lat1, azi=azi1, lon2=0, lat2=0)
-            @test_throws ArgumentError GeodesicLine(g, lon1=lon1, lat1=lat1, azi=azi1, dist=1, angle=1)
+            @test_throws ArgumentError GeodesicLine(g, lon1, lat1)
+            @test_throws ArgumentError GeodesicLine(g, lon1, lat1, azi=azi1, lon2=0, lat2=0)
+            @test_throws ArgumentError GeodesicLine(g, lon1, lat1, azi=azi1, dist=1, angle=1)
             # Keyword construction
-            g1, g2 = GeodesicLine(g, lat1, lon1, azi1), GeodesicLine(g, lon1=lon1, lat1=lat1, azi=azi1)
+            g1, g2 = GeodesicLine(g, lat1, lon1, azi1), GeodesicLine(g, lon1, lat1, azi=azi1)
             for f in fieldnames(typeof(f))
                 v1, v2 = getfield((g1, g2), f)
                 @test (isnan(v1) && isnan(v2)) || v1 == v2
