@@ -109,7 +109,8 @@ Compute the final point assuming an ellipsoid with semimajor axis `a` m
 and flattening `f`.
 
 Note that precomputing the ellipsoid with [`Geodesic`](@ref) and then reusing this
-if multiple `forward` calculations are needed will be more efficient.
+if multiple [`forward`](@ref) or [`forward_deg`](@ref) calculations are
+needed will be more efficient.
 """
 forward(a, f, lon, lat, azi, dist) = forward(Geodesic(a, f), lon, lat, azi, dist)
 
@@ -134,7 +135,7 @@ The final coordinates are (`lon′`, `lat′`)°,
 the backazimuth from the final point to the start is `baz`°, and the distance is
 `dist` m.
 
-If `ellipsoid` is not supplied, then WGS84 is used by default.
+If `ellipsoid` is not supplied, then [`WGS84`](@ref) is used by default.
 """
 function forward_deg(g::Geodesic, lon, lat, azi, angle)
     r = ArcDirect(g, lat, lon, azi, angle, Geodesics.ALL)
@@ -173,7 +174,7 @@ Compute for forward azimuth `azi`°, backazimuth `baz`°, surface distance `dist
 and angular distance `angle`° when travelling from (`lon1`, `lat1`)° to a
 second point (`lon2`, `lat2`)°.
 
-If `ellipsoid` is not supplied, then WGS84 is used by default.
+If `ellipsoid` is not supplied, then [`WGS84`](@ref) is used by default.
 """
 function inverse(g::Geodesic, lon1, lat1, lon2, lat2)
     r = Inverse(g, lat1, lon1, lat2, lon2)
@@ -194,10 +195,11 @@ if multiple `inverse` calculations are needed will be more efficient.
 inverse(a, f, lon1, lat1, lon2, lat2) = inverse(Geodesic(a, f), lon1, lat1, lon2, lat2)
 
 """
-    GeodesicLine([ellipsoid::Geodesic.WGS84], lon1, lat1; azi, lon2, lat2, angle, dist)
+    GeodesicLine([ellipsoid::Geodesic.WGS84,] lon1, lat1; azi, lon2, lat2, angle, dist)
 
 Construct a `GeodesicLine`, which may be used to efficiently compute many distances
-along a great circle.  There are two ways to define the great circle this way:
+along a great circle.  Set the coordinates of the starting point `lon1`° and `lat1`°.
+There are two ways to define the great circle this way:
 
 1. Set a start point, azimuth, and optionally distance.  This requires the keyword
    arguments `azi1` (all °) and optionally either `angle` (angular distance, °)
@@ -205,7 +207,7 @@ along a great circle.  There are two ways to define the great circle this way:
 2. Set a start point and end point.  This requires the keyword arguments
    `lon2` and `lat2` (all °).
 
-If `ellipsoid` is not supplied, then WGS84 is used by default.
+If `ellipsoid` is not supplied, then [`WGS84`](@ref) is used by default.
 
 See [`forward`](@ref) and [`forward_deg`](@ref) for details of computing points along a `GeodesicLine`.
 """
@@ -250,7 +252,8 @@ distance or as between two points).  There are three options:
 In all cases, the start and end points are always included.  When giving either `dist` or `angle`,
 the penultimate point may not be respectively `dist` m or `angle`° away from the final point.
 
-The output is a vector of named tuples as returned by [`forward`](@ref).
+The output is a vector of named tuples as returned by [`forward`](@ref)
+or [`forward_deg`](@ref).
 """
 function waypoints(line::GeodesicLine; n=nothing, dist=nothing, angle=nothing)
     isnan(line.a13) &&
