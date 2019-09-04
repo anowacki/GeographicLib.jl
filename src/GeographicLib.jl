@@ -209,7 +209,7 @@ See [`forward`](@ref) and [`forward_deg`](@ref) for details of computing points 
 """
 function GeodesicLine(geod=WGS84; lon1, lat1, azi=nothing, lon2=nothing, lat2=nothing,
     angle=nothing, dist=nothing)
-    if azi === nothing && any(isnothing, (lon2, lat2))
+    if azi === nothing && any(x->x===nothing, (lon2, lat2))
         throw(ArgumentError("cannot define a GeodesicLine without either azi or (lon2, lat2)"))
     end
     if azi !== nothing
@@ -251,7 +251,7 @@ The output is a vector of named tuples as returned by [`forward`](@ref).
 function waypoints(line::GeodesicLine; n=nothing, dist=nothing, angle=nothing)
     isnan(line.a13) &&
         throw(ArgumentError("cannot compute waypoints for a line constructed without a distance or endpoint"))
-    count(!isnothing, (n, dist, angle)) == 1 ||
+    count(x->x!==nothing, (n, dist, angle)) == 1 ||
         throw(ArgumentError("only one keyword parameter can be given"))
     if n !== nothing
         n >= 2 || throw(ArgumentError("number of points must be 2 or more"))
