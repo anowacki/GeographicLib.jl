@@ -25,3 +25,17 @@ possible to the Python interface.
 ## Index
 ```@index
 ```
+
+## References
+
+Some of the algorithms used in this package can be found in Charles
+Karney&rsquo;s papers:
+
+- C. F. F. Karney, Transverse Mercator with an accuracy of a few nanometers,
+  J. Geodesy 85(8), 475–485 (Aug. 2011).
+  doi:[10.1007/s00190-011-0445-3](https://doi.org/10.1007/s00190-011-0445-3)
+- C. F. F. Karney, Algorithms for geodesics, J. Geodesy 87(1), 43–55 (Jan. 2013).
+  doi:[10.1007/s00190-012-0578-z](https://doi.org/10.1007/s00190-012-0578-z)
+
+A fuller reference list for the methods can be found
+[here](https://geographiclib.sourceforge.io/geodesic-papers/biblio.html).
