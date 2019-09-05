@@ -7,12 +7,13 @@ See the file `README.md` for full usage instructions.
 
 ## Overview
 
-Two constructors and four main functions are provided with a Julia-like interface:
+Users are recommended to use the Julia-style interface:
 
 ### Constructors
 - `Geodesic` creates an instance of an ellipsoid and associated parameters for later computation.
 - `GeodesicLine` creates a great circle, including information about the ellipsoid, which allows
   for multiple great circle calculations to be performed efficiently.
+- `Polygon` creates a polygon made of great circles.
 
 ### `forward` and `forward_deg`
 - `forward` computes the end point given a starting point, azimuth and distance in
@@ -26,13 +27,28 @@ Both of these functions can use either a `Geodesic` or `GeodesicLine` for the ca
 - `inverse` computes the distance and forward and backazimuths between two points
   on the flattened sphere.
 
+### `waypoints`
+- `waypoints` will compute a set of evenly-spaced points along a `GeodesicLine`.
+
+### `Polygon`s
+- `add_point!` will add a new vertex to a `Polygon`
+- `add_edge!` adds a new vertex to a `Polygon` defined by an azimuth and
+  distance from the last vertex in the polygon
+
+
 ## Underlying library
 One can also access the implementation of the original library, which has been
 literally transcribed into Julia.  These are exposed via:
 
+- `GeographicLib.AddPoint()`
+- `GeographicLib.AddEdge()`
 - `GeographicLib.ArcDirect()`
+- `GeographicLib.ArcPosition()`
 - `GeographicLib.Direct()`
+- `GeographicLib.Compute()`
 - `GeographicLib.Inverse()`
+- `GeographicLib.SetArc()`
+- `GeographicLib.SetDistance()`
 
 These operate as the original Python library `geographiclib`, except the first
 argument to each is an ellipsoid as a `GeographicLib.Geodesics.Geodesic` object.
@@ -67,22 +83,30 @@ include("Math.jl")
 include("GeodesicCapability.jl")
 include("Geodesics.jl")
 include("GeodesicLines.jl")
+include("Accumulators.jl")
 
-import .Constants, .Math, .GeodesicCapability, .Geodesics, .GeodesicLines
+import .Constants, .Math, .GeodesicCapability, .Geodesics, .GeodesicLines,
+    .Accumulators
+
+"Ellipsoid of the WGS84 system, with a semimajor radius of $(Constants.WGS84_a) m
+and flattening $(Constants.WGS84_f)."
+const WGS84 = Geodesics.Geodesic(Constants.WGS84_a, Constants.WGS84_f)
 
 include("direct.jl")
+include("Polygons.jl")
+
+import .Polygons
 
 using .Geodesics: Inverse, Geodesic
 using .GeodesicLines: GeodesicLine, Position, ArcPosition, SetDistance, SetArc
+using .Polygons: Polygon
 
 include("inverse_line.jl")
 include("show.jl")
 
-export Geodesic, GeodesicLine, forward, forward_deg, inverse, waypoints
+export Geodesic, GeodesicLine, Polygon,
+    add_edge!, add_point!, forward, forward_deg, inverse, properties, waypoints
 
-"Ellipsoid of the WGS84 system, with a semimajor radius of $(Constants.WGS84_a) m
-and flattening $(Constants.WGS84_f)."
-const WGS84 = Geodesic(Constants.WGS84_a, Constants.WGS84_f)
 
 """
     forward([ellipsoid::Geodesic=WGS84,] lon, lat, azi, dist) -> lon′, lat′, baz, dist, angle
@@ -270,6 +294,54 @@ function waypoints(line::GeodesicLine; n=nothing, dist=nothing, angle=nothing)
         n = ceil(Int, line.a13/angle)
         [forward_deg(line, min(angle*i, line.a13)) for i in 0:n]
     end
+end
+
+"""
+    Polygon([ellipsoid::Geodesic=WGS84,] lons, lat) -> polygon
+
+Construct a `polygon` from arrays of coordinates `lons` and `lats`,
+optionally specifying an `ellipsoid`, which defaults to [`WGS84`](@ref).
+
+Calculate the polygon's area and perimeter with [`properties`](@ref).
+"""
+function Polygon(ellipsoid::Geodesic, lons::AbstractArray, lats::AbstractArray)
+    axes(lons) == axes(lats) ||
+        throw(ArgumentError("lon and lat arrays must be the same size"))
+    polygon = Polygon()
+    for (lon, lat) in zip(lons, lats)
+        add_point!(polygon, lon, lat)
+    end
+    polygon
+end
+
+Polygon(lons::AbstractArray, lats::AbstractArray) = Polygon(WGS84, lons, lats)
+
+"""
+    add_point!(polygon, lon, lat) -> polygon
+
+Add a point to a geodesic polygon in order to later compute its perimeter and
+area with [`properties`](@ref).
+"""
+add_point!(polygon::Polygon, lon, lat) = Polygons.AddPoint!(polygon, lat, lon)
+
+"""
+    add_edge!(polygon, azi, dist) -> polygon
+
+Add a point to a polygon by specifying the azimuth `azi` (°) and
+distance `dist` (m) from the previous point, in order to later compute its
+perimeter and area with [`properties`](@ref).
+"""
+add_edge!(polygon::Polygon, azi, dist) = Polygons.AddEdge!(polygon, azi, dist)
+
+"""
+    properties(polygon::Polygon) -> npoints, perimeter, area
+
+Return the number of points `npoints`, `perimeter` (m) and `area` (m²)
+of the geodesic `polygon`.
+"""
+function properties(polygon::Polygon)
+    n, perimeter, area = Polygons.Compute(polygon)
+    (n=n, perimeter=perimeter, area=area)
 end
 
 end # module

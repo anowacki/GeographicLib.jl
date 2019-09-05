@@ -6,6 +6,8 @@ import PyCall
     include("maths.jl")
     include("geodesics.jl")
     include("geodesiclines.jl")
+    include("polygons.jl")
+    include("accumulators.jl")
     include("direct.jl")
     include("geographiclib.jl")
     include("inverse_line.jl")
