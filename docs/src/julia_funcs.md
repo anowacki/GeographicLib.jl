@@ -1,5 +1,13 @@
 # Julia interface functions
 
+!!! note
+
+    The Julia-style interface with which you should normally interact
+    with GeographicLib.jl uses coordinates in the order **`lon`, `lat`**.
+    Note that the original library uses `lat`, `lon` order, which is
+    opposite our convention.
+
+
 ## Types and constructors
 
 ### `Geodesic`
@@ -25,13 +33,30 @@ circle on that ellipsoid.
 GeodesicLine(geod::Geodesic, lon1, lat1)
 ```
 
+### `Polygon`
+The `Polygon` type holds many points on an ellipsoid and can be used to
+calculate the perimeter of a polygon or the area enclosed by it by call
+[`properties`](@ref).  Use [`add_point!`](@ref) or [`add_edge!`](@ref)
+to add points to a `Polygon`.
+
+```@docs
+Polygon
+```
 
 ## Functions
+### `Geodesic`s and `GeodesicLine`s
 ```@docs
 forward
 forward_deg
 inverse
 waypoints
+```
+
+### `Polygon`s
+```@docs
+add_point!
+add_edge!
+properties
 ```
 
 ## Included ellipsoids

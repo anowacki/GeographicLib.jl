@@ -3,11 +3,20 @@
 As well as the [Julia interface functions](@ref) functions,
 GeographicLib.jl exposes an interface as similar as possible to
 that as implemeted in the
-[original library](https://geographiclib.sourceforge.io/html/geodesic.html).
+[Python version](https://geographiclib.sourceforge.io/html/python/index.html)
+of the original library.
+
+!!! note
+
+    For consistency with the original Python interface, coordinates are
+    given in the order `lat`, `lon` to the ‘traditional’ interface.
+    This is the **opposite order** to the Julia-style interface,
+    which sticks with `lon`, `lat` in line with many other packages.
 
 ## Types and constructors
 
-[`Geodesic`](@ref)s and [`GeodesicLine`](@ref)s are constructed as in the
+[`Geodesic`](@ref)s, [`GeodesicLine`](@ref)s and [`Polygon`](@ref)s
+are constructed as in the
 Julia-style interface, but with an additional method for `GeodesicLine`:
 
 ```@docs
@@ -52,4 +61,14 @@ GeographicLib.Geodesics.Result
 GeographicLib.Direct
 GeographicLib.ArcDirect
 GeographicLib.Inverse
+GeographicLib.Position
+GeographicLib.GeodesicLines.SetDistance
+GeographicLib.GeodesicLines.SetArc
 ```
+
+!!! note
+
+    Unlike the Python interface, the `SetPosition` and `SetArc` functions
+    do not change the `GeodesicLine` struct, but return an updated copy.
+    Make sure to use a pattern like `line = SetArc(line, azi, angle)` when
+    using these functions.
