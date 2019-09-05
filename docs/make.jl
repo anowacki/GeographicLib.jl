@@ -9,3 +9,7 @@ makedocs(
         "Traditional interface" => "traditional_funcs.md"
         ]
     )
+
+deploydocs(
+    repo = "github.com/anowacki/GeographicLib.jl.git",
+)
