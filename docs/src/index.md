@@ -12,8 +12,8 @@ the end point when travelling from a starting point a certain distance
 and along a certain direction.
 
 Most users should use the [Julia interface functions](@ref) to interact
-with the package, but this also implements an interface as close as
-possible to the Python interface.
+with the package, but this package also implements a ‘traditional’
+interface which works as closely as possible to the Python interface.
 
 [Examples](@ref) of usage are available.
 
@@ -29,7 +29,7 @@ possible to the Python interface.
 ## References
 
 Some of the algorithms used in this package can be found in Charles
-Karney&rsquo;s papers:
+Karney’s papers:
 
 - C. F. F. Karney, Transverse Mercator with an accuracy of a few nanometers,
   J. Geodesy 85(8), 475–485 (Aug. 2011).
