@@ -3,7 +3,8 @@
 
 Compute distances and angles of geodesics (shortest paths) on a flattened sphere.
 
-See the file `README.md` for full usage instructions.
+See the online documentation at https://anowacki.github.io/GeographicLib.jl/stable
+for full usage instructions.
 
 ## Overview
 
