@@ -174,30 +174,21 @@ function Inverse(self::Geodesic, lat1::T1, lon1::T2, lat2::T3, lon2::T4,
   else
     lon2 = Math.AngNormalize(lon2)
   end
-  result = Result()
-  result.lat1 = Math.LatFix(lat1)
-  result.lon1 = (outmask & LONG_UNROLL) > 0 ? lon1 : Math.AngNormalize(lon1)
-  result.lat2 = Math.LatFix(lat2)
-  result.lon2 = lon2
-  result.a12 = a12
-  if (outmask & DISTANCE) > 0
-      result.s12 = s12
-  end
-  if (outmask & AZIMUTH) > 0
-    result.azi1 = atand(salp1, calp1)
-    result.azi2 = atand(salp2, calp2)
-  end
-  if (outmask & REDUCEDLENGTH) > 0
-    result.m12 = m12
-  end
-  if (outmask & GEODESICSCALE) > 0
-    result.M12 = M12
-    result.M21 = M21
-  end
-  if (outmask & AREA) > 0
-    result.S12 = S12
-  end
-  result
+
+  result_lat1 = Math.LatFix(lat1)
+  result_lon1 = (outmask & LONG_UNROLL) > 0 ? lon1 : Math.AngNormalize(lon1)
+  result_lat2 = Math.LatFix(lat2)
+  result_lon2 = lon2
+  result_a12 = a12
+  result_s12 = (outmask & DISTANCE) > 0 ? s12 : nothing
+  result_azi1, result_azi2 = (outmask & AZIMUTH) > 0 ?
+    (atand(salp1, calp1), atand(salp2, calp2)) :
+    (nothing, nothing)
+  result_m12 = (outmask & REDUCEDLENGTH) > 0 ? m12 : nothing
+  result_M12, result_M21 = (outmask & GEODESICSCALE) > 0 ? (M12, M21) : (nothing, nothing)
+  result_S12 = (outmask & AREA) > 0 ? S12 : nothing
+  Result(result_lat1, result_lon1, result_lat2, result_lon2, result_a12, result_s12,
+         result_azi1, result_azi2, result_m12, result_M12, result_M21, result_S12)
 end
 
 """Private: Evaluate a trig series using Clenshaw summation."""

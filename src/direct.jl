@@ -38,24 +38,22 @@ function Direct(self::Geodesics.Geodesic, lat1::T1, lon1::T2, azi1::T3, s12::T4,
   a12, lat2, lon2, azi2, s12, m12, M12, M21, S12 = _GenDirect(self,
     lat1, lon1, azi1, false, s12, outmask)
   outmask &= Geodesics.OUT_MASK
-  result = Geodesics.Result()
-  result.lat1 = Math.LatFix(lat1)
-  result.lon1 = (outmask & Geodesics.LONG_UNROLL) > 0 ?
+
+  result_lat1 = Math.LatFix(lat1)
+  result_lon1 = (outmask & Geodesics.LONG_UNROLL) > 0 ?
                 lon1 :
                 Math.AngNormalize(lon1)
-  result.azi1 = Math.AngNormalize(azi1)
-  result.s12 = s12
-  result.a12 = a12
-  (outmask & Geodesics.LATITUDE) > 0 && (result.lat2 = lat2)
-  (outmask & Geodesics.LONGITUDE) > 0 && (result.lon2 = lon2)
-  (outmask & Geodesics.AZIMUTH) > 0 && (result.azi2 = azi2)
-  (outmask & Geodesics.REDUCEDLENGTH) > 0 && (result.m12 = m12)
-  if (outmask & Geodesics.GEODESICSCALE) > 0
-    result.M12 = M12
-    result.M21 = M21
-  end
-  (outmask & Geodesics.AREA) > 0 && (result.S12 = S12)
-  result
+  result_azi1 = Math.AngNormalize(azi1)
+  result_s12 = s12
+  result_a12 = a12
+  result_lat2 = (outmask & Geodesics.LATITUDE) > 0 ? lat2 : nothing
+  result_lon2 = (outmask & Geodesics.LONGITUDE) > 0 ? lon2 : nothing
+  result_azi2 = (outmask & Geodesics.AZIMUTH) > 0 ? azi2 : nothing
+  result_m12 = (outmask & Geodesics.REDUCEDLENGTH) > 0 ? m12 : nothing
+  result_M12, result_M21 = (outmask & Geodesics.GEODESICSCALE) > 0 ? (M12, M21) : (nothing, nothing)
+  result_S12 = (outmask & Geodesics.AREA) > 0 ? S12 : nothing
+  Result(result_lat1, result_lon1, result_lat2, result_lon2, result_a12, result_s12,
+         result_azi1, result_azi2, result_m12, result_M12, result_M21, result_S12)
 end
 
 """
@@ -98,24 +96,22 @@ function ArcDirect(self::Geodesics.Geodesic, lat1::T1, lon1::T2, azi1::T3, a12::
   a12, lat2, lon2, azi2, s12, m12, M12, M21, S12 = _GenDirect(self,
     lat1, lon1, azi1, true, a12, outmask)
   outmask &= Geodesics.OUT_MASK
-  result = Geodesics.Result()
-  result.lat1 = Math.LatFix(lat1)
-  result.lon1 = (outmask & Geodesics.LONG_UNROLL) > 0 ?
+
+  result_lat1 = Math.LatFix(lat1)
+  result_lon1 = (outmask & Geodesics.LONG_UNROLL) > 0 ?
                 lon1 :
                 Math.AngNormalize(lon1)
-  result.azi1 = Math.AngNormalize(azi1)
-  result.a12 = a12
-  (outmask & Geodesics.DISTANCE) > 0 && (result.s12 = s12)
-  (outmask & Geodesics.LATITUDE) > 0 && (result.lat2 = lat2)
-  (outmask & Geodesics.LONGITUDE) > 0 && (result.lon2 = lon2)
-  (outmask & Geodesics.AZIMUTH) > 0 && (result.azi2 = azi2)
-  (outmask & Geodesics.REDUCEDLENGTH) > 0 && (result.m12 = m12)
-  if (outmask & Geodesics.GEODESICSCALE) > 0
-    result.M12 = M12
-    result.M21 = M21
-  end
-  (outmask & Geodesics.AREA) > 0 && (result.S12 = S12)
-  result
+  result_azi1 = Math.AngNormalize(azi1)
+  result_a12 = a12
+  result_s12 = (outmask & Geodesics.DISTANCE) > 0 ? s12 : nothing
+  result_lat2 = (outmask & Geodesics.LATITUDE) > 0 ? lat2 : nothing
+  result_lon2 = (outmask & Geodesics.LONGITUDE) > 0 ? lon2 : nothing
+  result_azi2 = (outmask & Geodesics.AZIMUTH) > 0 ? azi2 : nothing
+  result_m12 = (outmask & Geodesics.REDUCEDLENGTH) > 0 ? m12 : nothing
+  result_M12, result_M21 = (outmask & Geodesics.GEODESICSCALE) > 0 ? (M12, M21) : (nothing, nothing)
+  result_S12 = (outmask & Geodesics.AREA) > 0 ? S12 : nothing
+  Result(result_lat1, result_lon1, result_lat2, result_lon2, result_a12, result_s12,
+         result_azi1, result_azi2, result_m12, result_M12, result_M21, result_S12)
 end
 
 """Private: General version of direct problem"""

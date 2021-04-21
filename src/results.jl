@@ -25,32 +25,29 @@ These are user-accesible.
 - `M21`: Second geodesic scale
 - `S12`: Area between the path from the first to the second point, and the equator (m²)
 """
-mutable struct Result
+Base.@kwdef struct Result
     "Latitude of starting point (°)"
-    lat1::Union{Float64,Nothing}
+    lat1::Union{Float64,Nothing} = nothing
     "Longitude of starting point (°)"
-    lon1::Union{Float64,Nothing}
+    lon1::Union{Float64,Nothing} = nothing
     "Latitude of end point (°)"
-    lat2::Union{Float64,Nothing}
+    lat2::Union{Float64,Nothing} = nothing
     "Longitude of end point (°)"
-    lon2::Union{Float64,Nothing}
+    lon2::Union{Float64,Nothing} = nothing
     "Angular distace between start and end points (°)"
-    a12::Union{Float64,Nothing}
+    a12::Union{Float64,Nothing} = nothing
     "Distance between start and end points (°)"
-    s12::Union{Float64,Nothing}
+    s12::Union{Float64,Nothing} = nothing
     "Forward azimuth from start point to end point (°)"
-    azi1::Union{Float64,Nothing}
+    azi1::Union{Float64,Nothing} = nothing
     "Forward azimuth at end point from start point along great cricle"
-    azi2::Union{Float64,Nothing}
+    azi2::Union{Float64,Nothing} = nothing
     "Reduced length of the geodesic"
-    m12::Union{Float64,Nothing}
+    m12::Union{Float64,Nothing} = nothing
     "First geodesic scale"
-    M12::Union{Float64,Nothing}
+    M12::Union{Float64,Nothing} = nothing
     "Second geodesic scale"
-    M21::Union{Float64,Nothing}
+    M21::Union{Float64,Nothing} = nothing
     "Area between the path from the first to the second point, and the equator (m²)"
-    S12::Union{Float64,Nothing}
+    S12::Union{Float64,Nothing} = nothing
 end
-
-Result() = Result(nothing, nothing, nothing, nothing, nothing, nothing, nothing,
-                  nothing, nothing, nothing, nothing, nothing)
