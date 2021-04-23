@@ -46,7 +46,7 @@ end
 
 """Evaluate a polynomial"""
 function polyval(N, p, s, x)
-    y = float(N < 0 ? 0 : p[s+1])
+    y = float(N < 0 ? zero(first(p)) : p[s+1])
     while N > 0
         N -= 1
         s += 1
@@ -88,14 +88,16 @@ end
 LatFix(x) = abs(x) > 90 ? nan : x
 
 "Compute y - x and reduce to [-180, 180]° accurately"
-function AngDiff(x, y)
+function AngDiff(x::T1, y::T2) where {T1,T2}
+    T = promote_type(T1, T2)
     d, t = sum(AngNormalize(-x), AngNormalize(y))
     d = AngNormalize(d)
-    sum(d == 180 && t > 0 ? -180 : d, t)
+    sum(d == 180 && t > 0 ? T(-180) : T(d), t)
 end
 
 """Compute sine and cosine of x in degrees."""
-function sincosd(x)
+function sincosd(x::T) where T
+    Tout = float(T)
     r = x % 360
     q = isnan(r) ? nan : floor(Int, r / 90 + 0.5)
     r -= 90 * q
@@ -110,7 +112,7 @@ function sincosd(x)
     elseif q == 3
         s, c = -c, s
     end
-    s, c = x == 0 ? (x, c) : (0.0+s, 0.0+c)
+    s, c = x == 0 ? (Tout(x), Tout(c)) : (Tout(0.0+s), Tout(0.0+c))
 end
 
 """compute atan2(y, x) with the result in degrees"""
