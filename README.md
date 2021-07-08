@@ -3,7 +3,7 @@
 Julia port of Charles F. F. Karney's [GeographicLib](https://geographiclib.sourceforge.io).
 
 [![Build Status](https://github.com/anowacki/GeographicLib.jl/workflows/CI/badge.svg)](https://github.com/anowacki/GeographicLib.jl/actions)
-[![Coverage Status](https://coveralls.io/repos/github/anowacki/GeographicLib.jl/badge.svg?branch=master)](https://coveralls.io/github/anowacki/GeographicLib.jl?branch=master)
+[![Coverage status](https://codecov.io/gh/anowacki/GeographicLib.jl/branch/master/graph/badge.svg?token=F6KFZ1DOY8)](https://codecov.io/gh/anowacki/GeographicLib.jl)
 
 ### Documentation
 [![](https://img.shields.io/badge/docs-stable-blue.svg)](https://anowacki.github.io/GeographicLib.jl/stable)
