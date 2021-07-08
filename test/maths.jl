@@ -11,7 +11,7 @@ pymaths = PyCall.pyimport_conda("geographiclib.geomath", "geographiclib", "conda
     @test GeographicLib.Math.maxval == pymaths.Math.maxval
     let x = rand(), y = rand()
         @test GeographicLib.Math.sq(x) == pymaths.Math.sq(x)
-        @test GeographicLib.Math.cbrt(x) == pymaths.Math.cbrt(x) rtol=1e-15
+        @test GeographicLib.Math.cbrt(x) ≈ pymaths.Math.cbrt(x) rtol=1e-15
         @test GeographicLib.Math.log1p(x) ≈ pymaths.Math.log1p(x) rtol=1e-15
         @test GeographicLib.Math.atanh(x) ≈ pymaths.Math.atanh(x) rtol=1e-15
         @test GeographicLib.Math.copysign(x, y) == pymaths.Math.copysign(x, y)
