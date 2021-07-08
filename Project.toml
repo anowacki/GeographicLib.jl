@@ -1,7 +1,7 @@
 name = "GeographicLib"
 uuid = "c96ba436-a6fe-11e9-10ab-c9f3919c93d1"
 authors = ["Andy Nowacki <a.nowacki@leeds.ac.uk>"]
-version = "0.4.0"
+version = "0.4.1"
 
 [compat]
 julia = "1"
