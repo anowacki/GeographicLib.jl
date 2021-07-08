@@ -22,7 +22,7 @@ pygl(args...) = pygeodesicline.GeodesicLine(args...)
                 if f in propertynames(l′)
                     v′ = getproperty(l′, f)
                     if v isa AbstractArray || !isnan(v)
-                        @test v ≈ v′ rtol=1e-15
+                        @test v ≈ v′ rtol=1e-14
                     else
                         @test isnan(v′)
                     end
