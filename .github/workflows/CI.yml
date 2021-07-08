@@ -6,7 +6,6 @@ on:
 
 jobs:
   test:
-    name: Tests
     env:
       # Make Julia install its own Python and geographiclib via Conda.jl
       PYTHON: 
@@ -27,12 +26,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
       - uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
-
       - uses: actions/cache@v1
         env:
           cache-name: cache-artifacts
@@ -43,9 +40,9 @@ jobs:
             ${{ runner.os }}-test-${{ env.cache-name }}-
             ${{ runner.os }}-test-
             ${{ runner.os }}-
-
+      - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
-
-      - uses: julia-actions/julia-uploadcodecov@latest
+      - uses: julia-actions/julia-processcoverage@v1
+      - uses: julia-actions/julia-uploadcoveralls@v1
         env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          COVERALLS_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
