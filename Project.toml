@@ -3,11 +3,12 @@ uuid = "c96ba436-a6fe-11e9-10ab-c9f3919c93d1"
 authors = ["Andy Nowacki <a.nowacki@leeds.ac.uk>"]
 version = "0.4.1"
 
-[compat]
-julia = "1"
-
 [deps]
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[compat]
+StaticArrays = "1"
+julia = "1"
 
 [extras]
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
