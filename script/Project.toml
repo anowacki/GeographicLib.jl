@@ -1,0 +1,7 @@
+[deps]
+GeographicLib = "c96ba436-a6fe-11e9-10ab-c9f3919c93d1"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+
+[compat]
+PyCall = "1"
+julia = "1.6"
