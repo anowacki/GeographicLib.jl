@@ -23,7 +23,7 @@ export GeodGeodesic,
        geod_init,
        geod_inverse
 
-const LIBGEOD = "/opt/local/lib/proj6/lib/libproj.dylib"
+const LIBGEOD = "/opt/local/lib/proj9/lib/libproj.dylib"
 
 struct Cdouble6
     x1::Cdouble

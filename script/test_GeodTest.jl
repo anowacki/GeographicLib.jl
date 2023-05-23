@@ -1,8 +1,8 @@
-import Pkg, PyCall
-
-Pkg.activate(joinpath(@__DIR__, ".."))
+import Pkg
+Pkg.activate(@__DIR__)
 
 using GeographicLib
+using PyCall
 
 include("GLWrapper.jl")
 import .GLWrapper
@@ -34,8 +34,10 @@ and will take several minutes.
 - Karney, C. F. F. (2010). Test set for geodesics [Data set].
   Zenodo. http://doi.org/10.5281/zenodo.32156
 """
-function runtest(; verbose=true, python=false, rtol=1e-5, atol=1e-5)
-    geod_test_file = joinpath(@__DIR__, "GeodTest.dat")
+function runtest(;
+    verbose=true, python=false, rtol=1e-5, atol=1e-5,
+    geod_test_file=joinpath(@__DIR__, "GeodTest.dat")
+)
     if !isfile(geod_test_file)
         @info("Downloading 83 MB file to $geod_test_file")
         download("https://zenodo.org/record/32156/files/GeodTest.dat?download=1",
@@ -83,7 +85,7 @@ function runtest(; verbose=true, python=false, rtol=1e-5, atol=1e-5)
                 if python
                     v_test_py = r_test_py["$f"]
                     if not_equal(v_true, v_test_py, rtol=rtol, atol=atol)
-                        push!(py_wrong_lines, (i=i, value=f, truth=v_true, v_test=v_test_py))
+                        push!(py_wrong_lines, (i=i, value=f, truth=v_true, test=v_test_py))
                     end
                 end
             end
@@ -92,9 +94,13 @@ function runtest(; verbose=true, python=false, rtol=1e-5, atol=1e-5)
     end
     errors = length(unique(w.i for w in wrong_lines))
     errors_c = length(unique(w.i for w in c_wrong_lines))
-    @info("Total Julia error lines: $errors")
-    @info("Total C error lines:     $errors_c")
-    inputs, wrong_lines, c_wrong_lines, py_wrong_lines
+    errors_python = length(unique(w.i for w in py_wrong_lines))
+    @info("Total Julia error lines:  $errors")
+    @info("Total C error lines:      $errors_c")
+    if python
+        @info("Total Python error lines: $errors_python")
+    end
+    (; inputs, wrong_lines, c_wrong_lines, py_wrong_lines)
 end
 
 !isinteractive() && abspath(PROGRAM_FILE) == abspath(@__FILE__) && runtest()
